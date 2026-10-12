@@ -9,7 +9,7 @@ define('BASE_URL', '/terracamp');
 $host = 'localhost';
 $user = 'root';
 $pass = '';          // kosong untuk XAMPP bawaan
-$db   = 'terracamp';
+$db   = 'terracamp2';
 
 $koneksi = mysqli_connect($host, $user, $pass, $db);
 

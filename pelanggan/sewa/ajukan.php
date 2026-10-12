@@ -130,6 +130,6 @@ try {
     exit;
 }
 
-$_SESSION['pesan'] = 'Pengajuan sewa berhasil dikirim. Tunggu persetujuan admin.';
-header('Location: detail.php?id=' . $id_sewa);
+$_SESSION['pesan'] = 'Pengajuan sewa berhasil dibuat. Silakan selesaikan pembayaran.';
+header('Location: bayar.php?id=' . $id_sewa);
 exit;

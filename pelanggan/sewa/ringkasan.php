@@ -138,9 +138,9 @@ require_once '../../includes/header.php';
         </div>
 
         <p class="catatan-info">
-            Halaman ini hanya untuk <strong>mengajukan sewa</strong>. Setelah diajukan, admin akan
-            memeriksa dan menyetujui pengajuanmu. Harga akan dikunci sesuai angka di atas.
-            Pembayaran tidak diproses di halaman ini.
+            Setelah klik <strong>Ajukan Sewa</strong>, kamu akan diarahkan ke
+            <strong>halaman pembayaran</strong> (simulasi). Admin baru bisa
+            menyetujui setelah pembayaran lunas.
         </p>
 
         <?php if (count($masalah) > 0): ?>

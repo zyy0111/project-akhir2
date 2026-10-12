@@ -86,7 +86,7 @@ require_once '../../includes/header.php';
                 <td><?= htmlspecialchars($row['nama']) ?></td>
                 <td><?= date('d-m-Y', strtotime($row['tanggal_sewa'])) ?></td>
                 <td><?= date('d-m-Y', strtotime($row['tanggal_kembali_rencana'])) ?></td>
-                <td>Rp <?= number_format($row['total_biaya'], 0, ',', '.') ?></td>
+                <td>Rp <?= number_format($row['total_biaya'], 0, ',', '.') ?><br><small><?= ($row['status_pembayaran'] ?? 'belum_bayar') === 'lunas' ? 'Lunas' : 'Belum Bayar' ?></small></td>
                 <td>
                     <span class="status status-<?= $row['status'] ?>"><?= ucfirst($row['status']) ?></span>
                     <?php if ($terlambat): ?>

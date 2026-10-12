@@ -36,7 +36,13 @@ $stmt = mysqli_prepare(
 );
 mysqli_stmt_bind_param($stmt, 'i', $id);
 mysqli_stmt_execute($stmt);
-$items = mysqli_stmt_get_result($stmt);
+$hasil_items = mysqli_stmt_get_result($stmt);
+
+// Tampung dulu supaya bisa dipakai 2x (tabel alat + invoice)
+$daftar_alat = [];
+while ($r = mysqli_fetch_assoc($hasil_items)) {
+    $daftar_alat[] = $r;
+}
 
 // Data pengembalian (kalau sudah dikembalikan)
 $stmt = mysqli_prepare(
@@ -124,17 +130,44 @@ require_once '../../includes/header.php';
 
         <strong>Durasi:</strong>
         <?= $sewa['durasi_hari'] ?> hari
+
+        <br>
+
+        <strong>Pembayaran:</strong>
+        <?php $sudah_bayar = ($sewa['status_pembayaran'] ?? 'belum_bayar') === 'lunas'; ?>
+        <span class="status <?= $sudah_bayar ? 'status-dikembalikan' : 'status-ditolak' ?>">
+            <?= $sudah_bayar ? 'Lunas' : 'Belum Bayar' ?>
+        </span>
+        <?php if ($sudah_bayar): ?>
+            <br>
+            <small class="bayar-lunas">
+                <?= logo_pembayaran($sewa['metode_pembayaran'] ?? '-') ?>
+                <?= htmlspecialchars($sewa['metode_pembayaran'] ?? '-') ?>
+                <?php if (!empty($sewa['tanggal_bayar'])): ?>
+                    &bull; <?= date('d-m-Y H:i', strtotime($sewa['tanggal_bayar'])) ?>
+                <?php endif; ?>
+            </small>
+        <?php endif; ?>
     </p>
+
+    <?php if (!$sudah_bayar && $sewa['status'] === 'menunggu'): ?>
+        <p class="alert-error">
+            Segera selesaikan pembayaran sebesar
+            <strong><?= rupiah((int) $sewa['total_biaya']) ?></strong>
+            supaya admin bisa menyetujui pengajuanmu.
+        </p>
+        <p>
+            <a class="btn" href="bayar.php?id=<?= $sewa['id_sewa'] ?>">Bayar Sekarang</a>
+        </p>
+    <?php elseif ($sudah_bayar && $sewa['status'] === 'menunggu'): ?>
+        <p class="alert-sukses">
+            Pembayaran lunas. Pengajuanmu sedang menunggu persetujuan admin.
+        </p>
+    <?php endif; ?>
 
     <!-- Keterangan sesuai status -->
 
-    <?php if ($sewa['status'] === 'menunggu'): ?>
-
-        <p class="alert-sukses">
-            Pengajuanmu sedang menunggu persetujuan admin.
-        </p>
-
-    <?php elseif ($sewa['status'] === 'dipinjam'): ?>
+    <?php if ($sewa['status'] === 'dipinjam'): ?>
 
         <?php if ($hari_terlambat > 0): ?>
 
@@ -209,7 +242,7 @@ require_once '../../includes/header.php';
 
         <tbody>
 
-            <?php while ($row = mysqli_fetch_assoc($items)): ?>
+            <?php foreach ($daftar_alat as $row): ?>
 
                 <?php
                 $harga_per_hari = (int) $row['harga_sewa_per_hari'];
@@ -254,7 +287,7 @@ require_once '../../includes/header.php';
 
                 </tr>
 
-            <?php endwhile; ?>
+            <?php endforeach; ?>
 
         </tbody>
 
@@ -268,6 +301,59 @@ require_once '../../includes/header.php';
     </div>
 
 </div>
+
+<?php if ($sudah_bayar):
+    $no_invoice = 'INV-' . date('Ymd', strtotime($sewa['tanggal_bayar'] ?? $sewa['tanggal_sewa'])) . '-' . str_pad($sewa['id_sewa'], 5, '0', STR_PAD_LEFT);
+    $nama_penyewa = htmlspecialchars($_SESSION['nama'] ?? 'Pelanggan');
+?>
+<div class="card invoice" id="invoice">
+    <div class="invoice-kepala">
+        <div>
+            <h3>Invoice Pembayaran</h3>
+            <p class="baris-info"><strong>No:</strong> <?= $no_invoice ?></p>
+            <p class="baris-info"><strong>Penyewa:</strong> <?= $nama_penyewa ?></p>
+            <p class="baris-info"><strong>Tanggal bayar:</strong>
+                <?= !empty($sewa['tanggal_bayar']) ? date('d-m-Y H:i', strtotime($sewa['tanggal_bayar'])) : '-' ?>
+            </p>
+        </div>
+        <div class="invoice-kanan">
+            <?= logo_pembayaran($sewa['metode_pembayaran'] ?? '-') ?>
+            <strong><?= htmlspecialchars($sewa['metode_pembayaran'] ?? '-') ?></strong>
+            <?php if (!empty($sewa['detail_pembayaran'])): ?>
+                <small><?= htmlspecialchars($sewa['detail_pembayaran']) ?></small>
+            <?php endif; ?>
+            <span class="status status-dikembalikan">LUNAS</span>
+        </div>
+    </div>
+
+    <?php if (($sewa['metode_pembayaran'] ?? '') === 'QRIS'): ?>
+        <?= gambar_dummy_bayar('QRIS') ?>
+    <?php endif; ?>
+
+    <table class="tabel">
+        <thead>
+            <tr><th>Alat</th><th>Jumlah</th><th>Subtotal</th></tr>
+        </thead>
+        <tbody>
+            <?php foreach ($daftar_alat as $row):
+                $sub = (int) $row['harga_satuan'] * (int) $row['jumlah'] * (int) $sewa['durasi_hari'];
+            ?>
+            <tr>
+                <td><?= htmlspecialchars($row['nama_alat']) ?></td>
+                <td><?= (int) $row['jumlah'] ?></td>
+                <td><?= rupiah($sub) ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <div class="total-sewa">
+        <strong>Total Dibayar:</strong>
+        <strong><?= rupiah((int) $sewa['total_biaya']) ?></strong>
+    </div>
+    <p class="catatan-info">Simpan invoice ini sebagai bukti pembayaran (simulasi, bukan transaksi asli).</p>
+    <button type="button" class="btn btn-garis" onclick="window.print()">Cetak Invoice</button>
+</div>
+<?php endif; ?>
 
 
 <?php if ($kembali): ?>

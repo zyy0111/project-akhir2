@@ -131,6 +131,38 @@ function simpan_gambar_alat($file, &$pesan_error) {
     return $nama_file;
 }
 
+// Menampilkan logo metode pembayaran (SVG lokal di assets/img/bayar/).
+// Kalau file tidak ada, tampilkan teks biasa sebagai cadangan.
+function logo_pembayaran($metode) {
+    $peta = [
+        'QRIS'          => 'qris.svg',
+        'DANA'          => 'dana.svg',
+        'OVO'           => 'ovo.svg',
+        'GoPay'         => 'gopay.svg',
+        'Transfer Bank' => 'transfer.svg',
+    ];
+
+    $nama = htmlspecialchars($metode);
+
+    if (!isset($peta[$metode])) {
+        return '<span class="logo-bayar-teks">' . $nama . '</span>';
+    }
+
+    return '<img class="logo-bayar" src="' . BASE_URL . '/assets/img/bayar/'
+        . $peta[$metode] . '" alt="' . $nama . '" loading="lazy">';
+}
+
+// Gambar dummy untuk simulasi pembayaran.
+// Hanya QRIS yang memakai QR. Metode lain memakai inputan biasa.
+function gambar_dummy_bayar($metode) {
+    if ($metode !== 'QRIS') {
+        return '';
+    }
+
+    return '<img class="qr-dummy" src="' . BASE_URL . '/assets/img/bayar/'
+        . 'dummy-qris.svg" alt="Kode dummy QRIS" loading="lazy">';
+}
+
 // Menghapus file foto alat dari folder (kalau ada)
 function hapus_gambar_alat($nama_file) {
     if (empty($nama_file)) {

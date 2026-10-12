@@ -28,8 +28,8 @@
 
         <div>
             <h4>Kontak</h4>
-            <p>Jl. Melati No. 12, Jakarta</p>
-            <p>+62 812 3456 7890</p>
+            <p>Jl. Kesadaran No. 7, Jakarta</p>
+            <p>+62 123 456 789</p>
             <p>hello@terracamp.id</p>
         </div>
 

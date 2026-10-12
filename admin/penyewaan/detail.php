@@ -71,7 +71,14 @@ require_once '../../includes/header.php';
         <?php endif; ?><br>
         <strong>Tanggal sewa:</strong> <?= date('d-m-Y', strtotime($sewa['tanggal_sewa'])) ?><br>
         <strong>Rencana kembali:</strong> <?= date('d-m-Y', strtotime($sewa['tanggal_kembali_rencana'])) ?><br>
-        <strong>Durasi:</strong> <?= $sewa['durasi_hari'] ?> hari
+        <strong>Durasi:</strong> <?= $sewa['durasi_hari'] ?> hari<br>
+        <strong>Pembayaran:</strong>
+        <?php $sudah_bayar = ($sewa['status_pembayaran'] ?? 'belum_bayar') === 'lunas'; ?>
+        <?php if ($sudah_bayar): ?>
+            <span class="badge-ok bayar-lunas"><?= logo_pembayaran($sewa['metode_pembayaran'] ?? '-') ?> Lunas (<?= htmlspecialchars($sewa['metode_pembayaran'] ?? '-') ?>)</span>
+        <?php else: ?>
+            <span class="badge-habis">Belum Bayar</span>
+        <?php endif; ?>
     </p>
 
     <?php if ($kembali): ?>
@@ -128,7 +135,9 @@ require_once '../../includes/header.php';
     <!-- Tombol aksi sesuai status -->
     <?php if ($sewa['status'] === 'menunggu'): ?>
 
-        <?php if ($ada_stok_kurang): ?>
+        <?php if (!$sudah_bayar): ?>
+            <p class="alert-error">Pelanggan belum membayar, jadi pengajuan ini belum bisa disetujui.</p>
+        <?php elseif ($ada_stok_kurang): ?>
             <p class="alert-error">Stok ada yang kurang, jadi pengajuan ini belum bisa disetujui.</p>
         <?php else: ?>
             <form method="POST" action="setujui.php" class="form-inline"

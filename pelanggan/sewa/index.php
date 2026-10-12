@@ -178,6 +178,10 @@ require_once '../../includes/header.php';
                     </small><br>
 
                     Total: <strong><?= rupiah($row['total_biaya']) ?></strong>
+                    <?php $lunas = ($row['status_pembayaran'] ?? 'belum_bayar') === 'lunas'; ?>
+                    <br><small>Pembayaran:
+                        <strong style="color:<?= $lunas ? 'green' : 'red' ?>"><?= $lunas ? 'Lunas' : 'Belum Bayar' ?></strong>
+                    </small>
 
                     <?php if ($row['status'] === 'dikembalikan' && $row['denda'] > 0): ?>
                         <span class="denda-teks">+ Denda <?= rupiah($row['denda']) ?></span>
@@ -199,6 +203,9 @@ require_once '../../includes/header.php';
                     <?php endif; ?>
 
                     <a class="btn-kecil" href="detail.php?id=<?= $row['id_sewa'] ?>">Lihat Detail</a>
+                    <?php if ($row['status'] === 'menunggu' && ($row['status_pembayaran'] ?? 'belum_bayar') !== 'lunas'): ?>
+                        <a class="btn-kecil" href="bayar.php?id=<?= $row['id_sewa'] ?>">Bayar</a>
+                    <?php endif; ?>
                 </div>
 
             </div>

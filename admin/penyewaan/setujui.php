@@ -17,14 +17,19 @@ try {
     mysqli_begin_transaction($koneksi);
 
     // 1. Kunci data penyewaan, lalu pastikan statusnya masih "menunggu"
+    // dan pembayarannya sudah lunas
     $stmt = mysqli_prepare($koneksi,
-        "SELECT status FROM penyewaan WHERE id_sewa = ? FOR UPDATE");
+        "SELECT status, status_pembayaran FROM penyewaan WHERE id_sewa = ? FOR UPDATE");
     mysqli_stmt_bind_param($stmt, 'i', $id_sewa);
     mysqli_stmt_execute($stmt);
     $sewa = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 
     if (!$sewa || $sewa['status'] !== 'menunggu') {
         throw new RuntimeException('Pengajuan ini sudah diproses atau tidak ditemukan.');
+    }
+
+    if (($sewa['status_pembayaran'] ?? 'belum_bayar') !== 'lunas') {
+        throw new RuntimeException('Belum bisa disetujui karena pelanggan belum membayar.');
     }
 
     // 2. Ambil alat yang disewa

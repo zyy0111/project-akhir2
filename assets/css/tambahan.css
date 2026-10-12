@@ -550,6 +550,116 @@
     font-size: 13px;
 }
 
+/* ---------- Logo metode pembayaran ---------- */
+.metode-bayar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0;
+    padding: 10px 12px;
+    background: #fff;
+    border: 1px solid #dde5dd;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.metode-bayar:hover {
+    border-color: #2e6b3f;
+    background: #f6faf6;
+}
+
+.logo-bayar {
+    width: 72px;
+    height: 28px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.logo-bayar-teks {
+    display: inline-block;
+    min-width: 72px;
+    padding: 4px 10px;
+    background: #e6f0e8;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.bayar-lunas {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bayar-lunas .logo-bayar {
+    width: 60px;
+    height: 24px;
+}
+
+/* ---------- Panel dummy pembayaran + invoice ---------- */
+.panel-dummy {
+    margin-top: 14px;
+    padding: 14px;
+    background: #f6faf6;
+    border: 1px dashed #2e6b3f;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.panel-dummy h4 {
+    margin: 0 0 10px;
+}
+
+.qr-dummy {
+    width: 220px;
+    max-width: 100%;
+    height: auto;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.input-bayar {
+    width: 100%;
+    margin: 8px 0;
+    padding: 10px;
+    border: 1px solid #b9c7b9;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.invoice-kepala {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.invoice-kanan {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.invoice .qr-dummy {
+    width: 140px;
+    margin: 8px 0;
+}
+
+@media print {
+    .navbar, .site-footer, .btn, .btn-kecil, .btn-garis {
+        display: none !important;
+    }
+    .invoice {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+}
+
 /* ---------- Layar kecil (HP) ---------- */
 @media (max-width: 800px) {
     .katalog-layout,
