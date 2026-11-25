@@ -28,9 +28,16 @@
 
         <div>
             <h4>Kontak</h4>
-            <p>Jl. Kesadaran No. 7, Jakarta</p>
+            <p>Jl. Kesadaran No 7, Jakarta</p>
             <p>+62 123 456 789</p>
-            <p>hello@terracamp.id</p>
+            <p>TerraCamp@gmail.com</p>
+        </div>
+
+        <div>
+            <h4>Metode Pembayaran</h4>
+            <p>Qris</p>
+            <p>Bank</p>
+            <p>COD</p>
         </div>
 
     </div>
